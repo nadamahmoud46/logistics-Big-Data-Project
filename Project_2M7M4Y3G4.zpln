@@ -1,0 +1,1449 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%spark.pyspark\nfrom pyspark.sql import SparkSession\nfrom pyspark.sql.functions import *\nfrom pyspark.sql.functions import col, to_date, datediff, when\nfrom pyspark.sql.functions import sum as _sum, round, countDistinct\n\nspark = SparkSession.builder.appName(\"ETL\").enableHiveSupport().getOrCreate()",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339402196_2055656291",
+      "id": "paragraph_1759339402196_2055656291",
+      "dateCreated": "2025-10-01T17:23:22+0000",
+      "dateStarted": "2025-10-01T19:39:05+0000",
+      "dateFinished": "2025-10-01T19:39:06+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:186"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Load data and assign column names\n\nlogistics_df = spark.read.csv(\"/staging_zone/logistics/logistics_data\", header=False, inferSchema=True) \\\n    .toDF(\"logistics_id\", \"order_id\", \"estimated_delivery_date\", \"actual_delivery_date\", \"shipping_cost\", \"warehouse_id\")\n\norder_lines = spark.read.csv(\"/staging_zone/staging_orderlines/staging_order_lines_data\", header=False, inferSchema=True) \\\n    .toDF(\"order_id\", \"product_id\", \"quantity\", \"price\")",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:07+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=0",
+              "$$hashKey": "object:840"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=1",
+              "$$hashKey": "object:841"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=2",
+              "$$hashKey": "object:842"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=3",
+              "$$hashKey": "object:843"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339416498_139135076",
+      "id": "paragraph_1759339416498_139135076",
+      "dateCreated": "2025-10-01T17:23:36+0000",
+      "dateStarted": "2025-10-01T19:39:07+0000",
+      "dateFinished": "2025-10-01T19:39:15+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:187"
+    },
+    {
+      "text": "%spark.pyspark\n# Inspect schema and sample data for logistics\n\nlogistics_df.printSchema()\nlogistics_df.show(5)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:22+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "root\n |-- logistics_id: integer (nullable = true)\n |-- order_id: integer (nullable = true)\n |-- estimated_delivery_date: string (nullable = true)\n |-- actual_delivery_date: string (nullable = true)\n |-- shipping_cost: double (nullable = true)\n |-- warehouse_id: string (nullable = true)\n\n+------------+--------+-----------------------+--------------------+-------------+------------+\n|logistics_id|order_id|estimated_delivery_date|actual_delivery_date|shipping_cost|warehouse_id|\n+------------+--------+-----------------------+--------------------+-------------+------------+\n|           1|       1|             2025-10-08|          2025-10-12|        29.69|         WH1|\n|           2|       2|             2025-10-24|          2025-10-23|         22.5|         WH2|\n|           3|       3|             2025-09-23|          2025-09-26|        31.22|         WH4|\n|           4|       4|             2025-07-31|          2025-07-31|        33.17|         WH3|\n|           5|       5|             2025-10-01|          2025-10-06|        23.84|         WH3|\n+------------+--------+-----------------------+--------------------+-------------+------------+\nonly showing top 5 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=5",
+              "$$hashKey": "object:901"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339425428_2097939215",
+      "id": "paragraph_1759339425428_2097939215",
+      "dateCreated": "2025-10-01T17:23:45+0000",
+      "dateStarted": "2025-10-01T19:39:22+0000",
+      "dateFinished": "2025-10-01T19:39:22+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:188"
+    },
+    {
+      "text": "%spark.pyspark\n# Inspect schema and sample data for order lines\n\norder_lines.printSchema()\norder_lines.show(5)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:24+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "root\n |-- order_id: integer (nullable = true)\n |-- product_id: integer (nullable = true)\n |-- quantity: integer (nullable = true)\n |-- price: double (nullable = true)\n\n+--------+----------+--------+------+\n|order_id|product_id|quantity| price|\n+--------+----------+--------+------+\n|       1|        28|       8|196.06|\n|       1|        39|       5|235.11|\n|       1|        35|       9|489.75|\n|       1|        50|       9|285.49|\n|       2|        26|       7| 20.21|\n+--------+----------+--------+------+\nonly showing top 5 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=6",
+              "$$hashKey": "object:947"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339434264_1543325291",
+      "id": "paragraph_1759339434264_1543325291",
+      "dateCreated": "2025-10-01T17:23:54+0000",
+      "dateStarted": "2025-10-01T19:39:24+0000",
+      "dateFinished": "2025-10-01T19:39:24+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:189"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Clean and transform logistics dates: \n\nlogistics_df = logistics_df.filter(col(\"estimated_delivery_date\").isNotNull() & col(\"actual_delivery_date\").isNotNull()) \\\n    .withColumn(\"estimated_delivery_date\", to_date(col(\"estimated_delivery_date\"), \"yyyy-MM-dd\")) \\\n    .withColumn(\"actual_delivery_date\", to_date(col(\"actual_delivery_date\"), \"yyyy-MM-dd\"))",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:26+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339438712_1430208978",
+      "id": "paragraph_1759339438712_1430208978",
+      "dateCreated": "2025-10-01T17:23:58+0000",
+      "dateStarted": "2025-10-01T19:39:26+0000",
+      "dateFinished": "2025-10-01T19:39:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:190"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Create logistics fact table:\n\nlogistics_fact = logistics_df \\\n    .withColumn(\"delivery_time_delta_days\", datediff(col(\"actual_delivery_date\") ,col(\"estimated_delivery_date\"))) \\\n    .withColumn(\"is_late_delivery\", when(col(\"delivery_time_delta_days\") > 0, 1).otherwise(0)) \\\n    .select(\"order_id\", \"delivery_time_delta_days\", \"is_late_delivery\", \"shipping_cost\", \"warehouse_id\")\n    \nlogistics_fact.show(10)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------+------------------------+----------------+-------------+------------+\n|order_id|delivery_time_delta_days|is_late_delivery|shipping_cost|warehouse_id|\n+--------+------------------------+----------------+-------------+------------+\n|       1|                       4|               1|        29.69|         WH1|\n|       2|                      -1|               0|         22.5|         WH2|\n|       3|                       3|               1|        31.22|         WH4|\n|       4|                       0|               0|        33.17|         WH3|\n|       5|                       5|               1|        23.84|         WH3|\n|       6|                       0|               0|         48.0|         WH4|\n|       7|                       0|               0|        48.16|         WH3|\n|       8|                       1|               1|        50.82|         WH4|\n|       9|                       1|               1|        13.13|         WH2|\n|      10|                       2|               1|        20.46|         WH1|\n+--------+------------------------+----------------+-------------+------------+\nonly showing top 10 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=7",
+              "$$hashKey": "object:1033"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339448296_272553605",
+      "id": "paragraph_1759339448296_272553605",
+      "dateCreated": "2025-10-01T17:24:08+0000",
+      "dateStarted": "2025-10-01T19:39:27+0000",
+      "dateFinished": "2025-10-01T19:39:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:191"
+    },
+    {
+      "text": "%spark.pyspark\n# Join logistics fact with order lines to get revenue\n\nlogistics_fact_joined = logistics_fact.join(order_lines, on=\"order_id\", how=\"inner\") \\\n                        .withColumn(\"total_revenue\",round(col(\"quantity\") * col(\"price\"), 2))\n                        \nlogistics_fact_joined.show(10)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:29+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------+------------------------+----------------+-------------+------------+----------+--------+------+-------------+\n|order_id|delivery_time_delta_days|is_late_delivery|shipping_cost|warehouse_id|product_id|quantity| price|total_revenue|\n+--------+------------------------+----------------+-------------+------------+----------+--------+------+-------------+\n|       1|                       4|               1|        29.69|         WH1|        28|       8|196.06|      1568.48|\n|       1|                       4|               1|        29.69|         WH1|        39|       5|235.11|      1175.55|\n|       1|                       4|               1|        29.69|         WH1|        35|       9|489.75|      4407.75|\n|       1|                       4|               1|        29.69|         WH1|        50|       9|285.49|      2569.41|\n|       2|                      -1|               0|         22.5|         WH2|        26|       7| 20.21|       141.47|\n|       2|                      -1|               0|         22.5|         WH2|        24|       9| 99.54|       895.86|\n|       2|                      -1|               0|         22.5|         WH2|        20|       8|132.81|      1062.48|\n|       3|                       3|               1|        31.22|         WH4|        17|       3|327.08|       981.24|\n|       3|                       3|               1|        31.22|         WH4|        10|       9|131.71|      1185.39|\n|       3|                       3|               1|        31.22|         WH4|        38|       5|453.02|       2265.1|\n+--------+------------------------+----------------+-------------+------------+----------+--------+------+-------------+\nonly showing top 10 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=9",
+              "$$hashKey": "object:1079"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759345176454_1492178584",
+      "id": "paragraph_1759345176454_1492178584",
+      "dateCreated": "2025-10-01T18:59:36+0000",
+      "dateStarted": "2025-10-01T19:39:29+0000",
+      "dateFinished": "2025-10-01T19:39:30+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:192"
+    },
+    {
+      "text": "%spark.pyspark\n# Check if an order is served by multiple warehouses\n\norder_warehouse_check = logistics_fact.groupBy(\"order_id\") \\\n                        .agg(countDistinct(\"warehouse_id\").alias(\"warehouse_count\")) \\\n                        .withColumn(\"is_multi_warehouse\", when(col(\"warehouse_count\") > 1, 1).otherwise(0)) \\\n                        .filter(col(\"warehouse_count\") > 1) \n                        \norder_warehouse_check.show()",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:34+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------+---------------+------------------+\n|order_id|warehouse_count|is_multi_warehouse|\n+--------+---------------+------------------+\n+--------+---------------+------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=10",
+              "$$hashKey": "object:1125"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=11",
+              "$$hashKey": "object:1126"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=12",
+              "$$hashKey": "object:1127"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759345260487_266913217",
+      "id": "paragraph_1759345260487_266913217",
+      "dateCreated": "2025-10-01T19:01:00+0000",
+      "dateStarted": "2025-10-01T19:39:34+0000",
+      "dateFinished": "2025-10-01T19:39:37+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:193"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Aggregate order-level summary:\n\norder_summary = logistics_fact_joined.groupBy(\"order_id\", \"warehouse_id\", \"is_late_delivery\", \"shipping_cost\") \\\n    .agg(round(sum(\"total_revenue\"), 2).alias(\"total_revenue_per_order\")) \\\n    .orderBy(\"order_id\")\n\norder_summary.show(10)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:38+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------+------------+----------------+-------------+-----------------------+\n|order_id|warehouse_id|is_late_delivery|shipping_cost|total_revenue_per_order|\n+--------+------------+----------------+-------------+-----------------------+\n|       1|         WH1|               1|        29.69|                9721.19|\n|       2|         WH2|               0|         22.5|                2099.81|\n|       3|         WH4|               1|        31.22|                4431.73|\n|       4|         WH3|               0|        33.17|                1507.86|\n|       5|         WH3|               1|        23.84|                5072.76|\n|       6|         WH4|               0|         48.0|                 5398.6|\n|       7|         WH3|               0|        48.16|                5417.74|\n|       8|         WH4|               1|        50.82|                3702.07|\n|       9|         WH2|               1|        13.13|                2143.59|\n|      10|         WH1|               1|        20.46|                5970.36|\n+--------+------------+----------------+-------------+-----------------------+\nonly showing top 10 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=14",
+              "$$hashKey": "object:1181"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=15",
+              "$$hashKey": "object:1182"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339462320_1335762428",
+      "id": "paragraph_1759339462320_1335762428",
+      "dateCreated": "2025-10-01T17:24:22+0000",
+      "dateStarted": "2025-10-01T19:39:38+0000",
+      "dateFinished": "2025-10-01T19:39:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:194"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Aggregate warehouse-level summary:\n\nwarehouse_summary = order_summary.groupBy(\"warehouse_id\") \\\n    .agg(\n        round(_sum(\"total_revenue_per_order\"), 2).alias(\"total_revenue\"),\n        round(_sum(\"shipping_cost\"), 2).alias(\"total_shipping_cost\"),\n        sum(\"is_late_delivery\").alias(\"late_deliveries\"),\n        countDistinct(\"order_id\").alias(\"total_orders\")) \\\n    .withColumn(\"late_delivery_rate\", round((col(\"late_deliveries\") / col(\"total_orders\")) * 100, 2)) \\\n    .withColumn(\"avg_shipping_cost_per_order\", round(col(\"total_shipping_cost\") / col(\"total_orders\"), 2)) \\\n    .orderBy(\"warehouse_id\")\n\nwarehouse_summary.show(10)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:42+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+------------+-------------+-------------------+---------------+------------+------------------+---------------------------+\n|warehouse_id|total_revenue|total_shipping_cost|late_deliveries|total_orders|late_delivery_rate|avg_shipping_cost_per_order|\n+------------+-------------+-------------------+---------------+------------+------------------+---------------------------+\n|         WH1|   1094339.13|            7215.54|            193|         262|             73.66|                      27.54|\n|         WH2|    923552.71|            6422.67|            160|         221|              72.4|                      29.06|\n|         WH3|   1116060.54|            7068.98|            188|         262|             71.76|                      26.98|\n|         WH4|    988992.51|            7216.58|            186|         255|             72.94|                       28.3|\n+------------+-------------+-------------------+---------------+------------+------------------+---------------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=17",
+              "$$hashKey": "object:1232"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=18",
+              "$$hashKey": "object:1233"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=19",
+              "$$hashKey": "object:1234"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=20",
+              "$$hashKey": "object:1235"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=21",
+              "$$hashKey": "object:1236"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339467848_544316878",
+      "id": "paragraph_1759339467848_544316878",
+      "dateCreated": "2025-10-01T17:24:27+0000",
+      "dateStarted": "2025-10-01T19:39:42+0000",
+      "dateFinished": "2025-10-01T19:39:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:195"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Warehouse efficiency analysis: calculate ratio of shipping cost to total revenue\n\nwarehouse_eff = warehouse_summary.withColumn(\"shipping_to_revenue_ratio\",\n            round(col(\"total_shipping_cost\") / col(\"total_revenue\"), 3)) \\\n            .select(\"warehouse_id\", \"shipping_to_revenue_ratio\")\n\nwarehouse_eff.show()",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:53+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+------------+-------------------------+\n|warehouse_id|shipping_to_revenue_ratio|\n+------------+-------------------------+\n|         WH1|                    0.007|\n|         WH2|                    0.007|\n|         WH3|                    0.006|\n|         WH4|                    0.007|\n+------------+-------------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=23",
+              "$$hashKey": "object:1298"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=24",
+              "$$hashKey": "object:1299"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=25",
+              "$$hashKey": "object:1300"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=26",
+              "$$hashKey": "object:1301"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=27",
+              "$$hashKey": "object:1302"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339476856_126527922",
+      "id": "paragraph_1759339476856_126527922",
+      "dateCreated": "2025-10-01T17:24:36+0000",
+      "dateStarted": "2025-10-01T19:39:53+0000",
+      "dateFinished": "2025-10-01T19:39:55+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:196"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Delivery performance per warehouse: average delivery delay in days\n\ndelivery_perf = logistics_fact.groupBy(\"warehouse_id\") \\\n    .agg(round(avg(\"delivery_time_delta_days\"), 2).alias(\"avg_delivery_time_delta\")) \\\n    .orderBy(\"warehouse_id\")\n\ndelivery_perf.show()",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:56+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+------------+-----------------------+\n|warehouse_id|avg_delivery_time_delta|\n+------------+-----------------------+\n|         WH1|                   2.24|\n|         WH2|                    2.1|\n|         WH3|                   2.07|\n|         WH4|                   2.05|\n+------------+-----------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=28",
+              "$$hashKey": "object:1364"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=29",
+              "$$hashKey": "object:1365"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339483008_858745074",
+      "id": "paragraph_1759339483008_858745074",
+      "dateCreated": "2025-10-01T17:24:43+0000",
+      "dateStarted": "2025-10-01T19:39:56+0000",
+      "dateFinished": "2025-10-01T19:39:57+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:197"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Product-level analysis of late deliveries:\n\nproduct_delay = logistics_fact_joined.groupBy(\"product_id\") \\\n    .agg(sum(\"is_late_delivery\").alias(\"late_deliveries\"),\n         countDistinct(\"order_id\").alias(\"total_orders\")) \\\n    .withColumn(\"late_rate\", round(col(\"late_deliveries\") / col(\"total_orders\") * 100, 2)) \\\n    .orderBy(desc(\"late_rate\"))\n\nproduct_delay.show(10)",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:39:58+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+----------+---------------+------------+---------+\n|product_id|late_deliveries|total_orders|late_rate|\n+----------+---------------+------------+---------+\n|        41|             49|          55|    89.09|\n|        24|             52|          62|    83.87|\n|        17|             47|          57|    82.46|\n|        29|             50|          61|    81.97|\n|        30|             58|          71|    81.69|\n|        32|             49|          60|    81.67|\n|        13|             52|          64|    81.25|\n|        19|             38|          47|    80.85|\n|        37|             54|          67|     80.6|\n|        39|             44|          55|     80.0|\n+----------+---------------+------------+---------+\nonly showing top 10 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=31",
+              "$$hashKey": "object:1415"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=32",
+              "$$hashKey": "object:1416"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=33",
+              "$$hashKey": "object:1417"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339491704_436568205",
+      "id": "paragraph_1759339491704_436568205",
+      "dateCreated": "2025-10-01T17:24:51+0000",
+      "dateStarted": "2025-10-01T19:39:58+0000",
+      "dateFinished": "2025-10-01T19:40:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:198"
+    },
+    {
+      "text": "%spark.pyspark\n\n# Save Fact Table\nlogistics_fact.write.mode(\"overwrite\").parquet(\"/staging_zone/staging_logistics_fact\")\n\n# Save Order Summary\norder_summary.write.mode(\"overwrite\").parquet(\"/staging_zone/order_summary\")\n\n# Save Warehouse Summary\nwarehouse_summary.write.mode(\"overwrite\").parquet(\"/staging_zone/warehouse_summary\")\n\n# Save Product Delay\nproduct_delay.write.mode(\"overwrite\").parquet(\"/staging_zone/product_delay_summary\")",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:40:02+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=34",
+              "$$hashKey": "object:1471"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=36",
+              "$$hashKey": "object:1472"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=37",
+              "$$hashKey": "object:1473"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=38",
+              "$$hashKey": "object:1474"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=39",
+              "$$hashKey": "object:1475"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=41",
+              "$$hashKey": "object:1476"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=42",
+              "$$hashKey": "object:1477"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=43",
+              "$$hashKey": "object:1478"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=44",
+              "$$hashKey": "object:1479"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=45",
+              "$$hashKey": "object:1480"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=46",
+              "$$hashKey": "object:1481"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=47",
+              "$$hashKey": "object:1482"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=49",
+              "$$hashKey": "object:1483"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=50",
+              "$$hashKey": "object:1484"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=51",
+              "$$hashKey": "object:1485"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=52",
+              "$$hashKey": "object:1486"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=53",
+              "$$hashKey": "object:1487"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759346884924_864386518",
+      "id": "paragraph_1759346884924_864386518",
+      "dateCreated": "2025-10-01T19:28:04+0000",
+      "dateStarted": "2025-10-01T19:40:02+0000",
+      "dateFinished": "2025-10-01T19:40:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:199"
+    },
+    {
+      "text": "%spark.pyspark\n# Register Temp Views for Spark SQL queries\n\nlogistics_fact.createOrReplaceTempView(\"logistics_fact\")\norder_summary.createOrReplaceTempView(\"order_summary\")\nwarehouse_summary.createOrReplaceTempView(\"warehouse_summary\")\nproduct_delay.createOrReplaceTempView(\"product_delay_summary\")",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:40:14+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339499943_758552853",
+      "id": "paragraph_1759339499943_758552853",
+      "dateCreated": "2025-10-01T17:24:59+0000",
+      "dateStarted": "2025-10-01T19:40:14+0000",
+      "dateFinished": "2025-10-01T19:40:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:200"
+    },
+    {
+      "text": "%spark.sql\n-- Spark SQL Query: Calculate average delivery time delta (days) per warehouse\n\nSELECT warehouse_id,\n    ROUND(AVG(delivery_time_delta_days), 2) AS avg_delivery_time_delta\nFROM logistics_fact\nGROUP BY warehouse_id\nORDER BY warehouse_id;",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:40:16+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "warehouse_id": "string",
+                      "avg_delivery_time_delta": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default",
+                  "stacked": false
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "warehouse_id",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "avg_delivery_time_delta",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "warehouse_id\tavg_delivery_time_delta\nWH1\t2.24\nWH2\t2.1\nWH3\t2.07\nWH4\t2.05\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=54",
+              "$$hashKey": "object:1637"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=55",
+              "$$hashKey": "object:1638"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759339508135_1188119255",
+      "id": "paragraph_1759339508135_1188119255",
+      "dateCreated": "2025-10-01T17:25:08+0000",
+      "dateStarted": "2025-10-01T19:40:16+0000",
+      "dateFinished": "2025-10-01T19:40:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:201"
+    },
+    {
+      "text": "%spark.sql\n\n-- Top warehouses with highest late delivery rate\n\nSELECT warehouse_id, late_delivery_rate\nFROM warehouse_summary\nORDER BY late_delivery_rate DESC;",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:41:27+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "warehouse_id": "string",
+                      "late_delivery_rate": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "warehouse_id\tlate_delivery_rate\nWH1\t73.66\nWH4\t72.94\nWH2\t72.4\nWH3\t71.76\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=57",
+              "$$hashKey": "object:1688"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=58",
+              "$$hashKey": "object:1689"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=59",
+              "$$hashKey": "object:1690"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=60",
+              "$$hashKey": "object:1691"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759345500863_1815239238",
+      "id": "paragraph_1759345500863_1815239238",
+      "dateCreated": "2025-10-01T19:05:00+0000",
+      "dateStarted": "2025-10-01T19:41:26+0000",
+      "dateFinished": "2025-10-01T19:41:27+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:202"
+    },
+    {
+      "text": "%spark.sql\n\n-- Top 10 products causing delays\n\nSELECT product_id, late_rate, late_deliveries, total_orders\nFROM product_delay_summary\nORDER BY late_rate DESC\nLIMIT 10;",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:42:10+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "product_id": "string",
+                      "late_rate": "string",
+                      "late_deliveries": "string",
+                      "total_orders": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "product_id\tlate_rate\tlate_deliveries\ttotal_orders\n41\t89.09\t49\t55\n24\t83.87\t52\t62\n17\t82.46\t47\t57\n29\t81.97\t50\t61\n30\t81.69\t58\t71\n32\t81.67\t49\t60\n13\t81.25\t52\t64\n19\t80.85\t38\t47\n37\t80.6\t54\t67\n39\t80.0\t44\t55\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=66",
+              "$$hashKey": "object:1749"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=67",
+              "$$hashKey": "object:1750"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=68",
+              "$$hashKey": "object:1751"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759347686300_1950965148",
+      "id": "paragraph_1759347686300_1950965148",
+      "dateCreated": "2025-10-01T19:41:26+0000",
+      "dateStarted": "2025-10-01T19:42:10+0000",
+      "dateFinished": "2025-10-01T19:42:11+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:203"
+    },
+    {
+      "text": "%spark.sql\n\n-- Revenue vs shipping cost ratio per warehouse\n\nSELECT warehouse_id,\n       total_revenue,\n       total_shipping_cost,\n       ROUND(total_shipping_cost/total_revenue,3) AS shipping_to_revenue_ratio\nFROM warehouse_summary\nORDER BY shipping_to_revenue_ratio DESC;",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:47:05+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "warehouse_id": "string",
+                      "total_revenue": "string",
+                      "total_shipping_cost": "string",
+                      "shipping_to_revenue_ratio": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "warehouse_id\ttotal_revenue\ttotal_shipping_cost\tshipping_to_revenue_ratio\nWH1\t1094339.13\t7215.54\t0.007\nWH2\t923552.71\t6422.67\t0.007\nWH4\t988992.51\t7216.58\t0.007\nWH3\t1116060.54\t7068.98\t0.006\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=91",
+              "$$hashKey": "object:1805"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=92",
+              "$$hashKey": "object:1806"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=93",
+              "$$hashKey": "object:1807"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=94",
+              "$$hashKey": "object:1808"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=95",
+              "$$hashKey": "object:1809"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759347704068_1110885816",
+      "id": "paragraph_1759347704068_1110885816",
+      "dateCreated": "2025-10-01T19:41:44+0000",
+      "dateStarted": "2025-10-01T19:47:04+0000",
+      "dateFinished": "2025-10-01T19:47:05+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:204"
+    },
+    {
+      "text": "%spark.sql\n\n-- Warehouse efficiency vs late deliveries\n\nSELECT \n    warehouse_id,\n    COUNT(order_id) AS total_orders,\n    SUM(is_late_delivery) AS late_deliveries,\n    ROUND(SUM(total_revenue_per_order), 2) AS total_revenue,\n    ROUND(SUM(shipping_cost), 2) AS total_shipping_cost,\n    ROUND(SUM(total_revenue_per_order)/SUM(shipping_cost), 2) AS revenue_to_shipping_ratio,\n    ROUND(SUM(is_late_delivery)/COUNT(order_id)*100, 2) AS late_delivery_rate_percentage\nFROM order_summary\nGROUP BY warehouse_id\nORDER BY revenue_to_shipping_ratio DESC, late_delivery_rate_percentage ASC;",
+      "user": "anonymous",
+      "dateUpdated": "2025-10-01T19:48:00+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "warehouse_id": "string",
+                      "total_orders": "string",
+                      "late_deliveries": "string",
+                      "total_revenue": "string",
+                      "total_shipping_cost": "string",
+                      "revenue_to_shipping_ratio": "string",
+                      "late_delivery_rate_percentage": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TABLE",
+            "data": "warehouse_id\ttotal_orders\tlate_deliveries\ttotal_revenue\ttotal_shipping_cost\trevenue_to_shipping_ratio\tlate_delivery_rate_percentage\nWH3\t262\t188\t1116060.54\t7068.98\t157.88\t71.76\nWH1\t262\t193\t1094339.13\t7215.54\t151.66\t73.66\nWH2\t221\t160\t923552.71\t6422.67\t143.8\t72.4\nWH4\t255\t186\t988992.51\t7216.58\t137.04\t72.94\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=103",
+              "$$hashKey": "object:1871"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=104",
+              "$$hashKey": "object:1872"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=105",
+              "$$hashKey": "object:1873"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=106",
+              "$$hashKey": "object:1874"
+            },
+            {
+              "jobUrl": "http://f0325a8f31e2:4040/jobs/job?id=107",
+              "$$hashKey": "object:1875"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1759347753404_106048861",
+      "id": "paragraph_1759347753404_106048861",
+      "dateCreated": "2025-10-01T19:42:33+0000",
+      "dateStarted": "2025-10-01T19:48:00+0000",
+      "dateFinished": "2025-10-01T19:48:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:205"
+    }
+  ],
+  "name": "Project",
+  "id": "2M7M4Y3G4",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Project"
+}
