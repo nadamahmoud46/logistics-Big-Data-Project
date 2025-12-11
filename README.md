@@ -1,5 +1,3 @@
-# logistics-Big-Data-Project
-
 ## 🚀 Project Vision & Objective
 In today’s highly competitive e-commerce landscape, operational efficiency and customer satisfaction are key drivers of success. This project aims to **build a scalable, data-driven analytics platform** that transforms raw logistics and sales data into actionable business intelligence.
 
@@ -16,6 +14,7 @@ Unclear relationship between shipping costs and product-level revenue affects pr
 🔴 **Warehouse Inefficiency**
 Lack of visibility into underperforming warehouses makes optimization difficult.
 
+
 🔴 **Limited Product Insight**
 No clear view of which products are frequently delayed, impacting inventory and supplier decisions.
 
@@ -28,6 +27,7 @@ No clear view of which products are frequently delayed, impacting inventory and 
 **Apache Hive** – for querying and reporting structured data
 
 **HDFS** – for data storage
+<img width="962" height="531" alt="pipCapture" src="https://github.com/user-attachments/assets/2d3beb46-400f-47b7-933b-d4885f1be88e" />
 
 ETL Pipeline:
 Data from transactional systems is ingested using **Sqoop**, transformed and processed with **Spark**, and stored in **Hive tables** to support analytical queries and dashboards.
